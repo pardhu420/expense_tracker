@@ -1,0 +1,11 @@
+body {
+    transition: background-color 0.3s, color 0.3s;
+}
+body.dark {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+.card.dark {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+}
