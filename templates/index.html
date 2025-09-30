@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+<div class="container mt-3">
+
+    <!-- Header / Navbar -->
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-primary">Expense Tracker</h2>
+        <div>
+            <span class="me-3">Hello, {{ username }}</span>
+            <button id="toggleDark" class="btn btn-secondary btn-sm">Toggle Dark Mode</button>
+            <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+
+    <!-- Add Expense Form -->
+    <div class="card shadow p-4 mt-4">
+        <h4>Add New Expense</h4>
+        <form id="expenseForm" method="POST" action="/add">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label>Date</label>
+                    <input type="date" name="date" id="date" class="form-control">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Amount</label>
+                    <input type="number" step="0.01" name="amount" id="amount" class="form-control" placeholder="0.00">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Category</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">Select</option>
+                        <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Description</label>
+                    <input type="text" name="description" id="description" class="form-control" placeholder="Optional">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mt-2">Add Expense</button>
+            <div id="error" class="text-danger mt-2"></div>
+        </form>
+    </div>
+
+    <!-- Expense Summary -->
+    <div class="card shadow p-4 mt-4">
+        <h4>Summary</h4>
+        <p><strong>Total Expenses:</strong> ${{ total }}</p>
+        <ul>
+            {% for cat, amt in category_summary.items() %}
+            <li>{{ cat }}: ${{ amt }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Expense List -->
+    {% if expenses %}
+    <div class="card shadow p-4 mt-4">
+        <h4>Expense List</h4>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in expenses %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ e.date }}</td>
+                    <td>${{ e.amount }}</td>
+                    <td>{{ e.category }}</td>
+                    <td>{{ e.description }}</td>
+                    <td>
+                        <form method="POST" action="/delete/{{ loop.index0 }}" onsubmit="return confirm('Delete this expense?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4">No expenses added yet.</div>
+    {% endif %}
+
+</div>
+</body>
+</html>
